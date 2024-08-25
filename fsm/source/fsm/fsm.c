@@ -56,6 +56,15 @@ fsmr_t fsm_run(fsm_t *fsm) {
         return fsmERRPAR;
     }
 
+    if (fsm->curr_state != fsm->next_state) {
+        fsm->curr_state->ops.exit(fsm->curr_state);
+        fsm->prev_state = fsm->curr_state;
+        fsm->next_state->ops.enter(fsm->next_state);
+        fsm->curr_state = fsm->next_state;
+    }
+
+    fsm->curr_state->ops.run(fsm->curr_state);
+
     return fsmOK;
 }
 
