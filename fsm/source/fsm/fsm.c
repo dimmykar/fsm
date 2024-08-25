@@ -60,9 +60,20 @@ fsmr_t fsm_run(fsm_t *fsm) {
 }
 
 fsmr_t fsm_state_transition(fsm_t *fsm, uint32_t new_state_id) {
-    if (fsm == NULL) {
+    if (fsm == NULL || fsm->states_list == NULL) {
         return fsmERRPAR;
     }
 
-    return fsmOK;
+    for (size_t i = 0; fsm->states_list[i] != NULL; i++) {
+        fsm_state_t *state = fsm->states_list[i];
+
+        if (state->id == new_state_id) {
+            if (fsm->curr_state != state) {
+                fsm->next_state = state;
+            }
+            return fsmOK;
+        }
+    }
+
+    return fsmERR;
 }
