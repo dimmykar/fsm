@@ -62,6 +62,8 @@ fsmr_t fsm_run(fsm_t *fsm) {
         return fsmERRPAR;
     }
 
+    fsmr_t result = fsmOK;
+
 #if FSM_CFG_OS
     fsm_sys_mutex_wait(&fsm->lock);
 #endif /* FSM_CFG_OS */
@@ -72,17 +74,17 @@ fsmr_t fsm_run(fsm_t *fsm) {
         fsm_sys_mutex_release(&fsm->lock);
 #endif /* FSM_CFG_OS */
 
-        fsm->prev_state->ops.exit(fsm->prev_state);
-        fsm->curr_state->ops.enter(fsm->curr_state);
+        result |= fsm->prev_state->ops.exit(fsm->prev_state);
+        result |= fsm->curr_state->ops.enter(fsm->curr_state);
     } else {
 #if FSM_CFG_OS
         fsm_sys_mutex_release(&fsm->lock);
 #endif /* FSM_CFG_OS */
     }
 
-    fsm->curr_state->ops.run(fsm->curr_state);
+    result |= fsm->curr_state->ops.run(fsm->curr_state);
 
-    return fsmOK;
+    return result;
 }
 
 fsmr_t fsm_state_transition(fsm_t *fsm, uint32_t new_state_id) {
