@@ -30,6 +30,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "fsm/fsm_config.h"
+#include "fsm/system/fsm_sys.h"
+
 typedef struct fsm_state fsm_state_t;
 
 /**
@@ -96,6 +99,10 @@ typedef struct fsm {
     fsm_state_t *curr_state;                 /*!< FSM current state */
     fsm_state_t *prev_state;                 /*!< FSM previous state */
     fsm_state_t *next_state;                 /*!< FSM next state */
+
+#if FSM_CFG_OS && !__DOXYGEN__
+    FSM_CFG_OS_MUTEX_HANDLE lock;            /*!< FSM safe guard locker object based on mutex */
+#endif /* FSM_CFG_OS && !__DOXYGEN__ */
 } fsm_t;
 
 #ifdef __cplusplus

@@ -47,6 +47,12 @@ fsmr_t fsm_init(fsm_t *fsm, fsm_state_t *initial_state, fsm_state_t **states_lis
         }
     }
 
+#if FSM_CFG_OS
+    if (!fsm_sys_mutex_create(&fsm->lock)) {
+        return fsmERR;
+    }
+#endif /* FSM_CFG_OS */
+
     fsm->curr_state = fsm->prev_state = fsm->next_state = initial_state;
     return fsmOK;
 }
@@ -56,11 +62,22 @@ fsmr_t fsm_run(fsm_t *fsm) {
         return fsmERRPAR;
     }
 
+#if FSM_CFG_OS
+    fsm_sys_mutex_wait(&fsm->lock);
+#endif /* FSM_CFG_OS */
     if (fsm->curr_state != fsm->next_state) {
-        fsm->curr_state->ops.exit(fsm->curr_state);
         fsm->prev_state = fsm->curr_state;
-        fsm->next_state->ops.enter(fsm->next_state);
         fsm->curr_state = fsm->next_state;
+#if FSM_CFG_OS
+        fsm_sys_mutex_release(&fsm->lock);
+#endif /* FSM_CFG_OS */
+
+        fsm->prev_state->ops.exit(fsm->prev_state);
+        fsm->curr_state->ops.enter(fsm->curr_state);
+    } else {
+#if FSM_CFG_OS
+        fsm_sys_mutex_release(&fsm->lock);
+#endif /* FSM_CFG_OS */
     }
 
     fsm->curr_state->ops.run(fsm->curr_state);
@@ -77,9 +94,15 @@ fsmr_t fsm_state_transition(fsm_t *fsm, uint32_t new_state_id) {
         fsm_state_t *state = fsm->states_list[i];
 
         if (state->id == new_state_id) {
+#if FSM_CFG_OS
+            fsm_sys_mutex_wait(&fsm->lock);
+#endif /* FSM_CFG_OS */
             if (fsm->curr_state != state) {
                 fsm->next_state = state;
             }
+#if FSM_CFG_OS
+            fsm_sys_mutex_release(&fsm->lock);
+#endif /* FSM_CFG_OS */
             return fsmOK;
         }
     }
