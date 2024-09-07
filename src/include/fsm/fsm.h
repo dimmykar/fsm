@@ -59,7 +59,7 @@ typedef struct fsm_state_ops {
 
     /**
      * \brief      Enter state handler
-     * \details    Called once on entering to state
+     * \details    Called once on entering to state if not NULL
      * \param[in]  state: Pointer to state
      * \return     \ref fsmOK on success, member of \ref fsmr_t otherwise
      */
@@ -67,7 +67,7 @@ typedef struct fsm_state_ops {
 
     /**
      * \brief      Exit state handler
-     * \details    Called once on exiting from state
+     * \details    Called once on exiting from state if not NULL
      * \param[in]  state: Pointer to state
      * \return     \ref fsmOK on success, member of \ref fsmr_t otherwise
      */

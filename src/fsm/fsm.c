@@ -75,8 +75,12 @@ fsmr_t fsm_run(fsm_t *fsm) {
         fsm_sys_mutex_release(&fsm->lock);
 #endif /* FSM_CFG_OS */
 
-        result |= fsm->prev_state->ops.exit(fsm->prev_state);
-        result |= fsm->curr_state->ops.enter(fsm->curr_state);
+        if (fsm->prev_state->ops.exit != NULL) {
+            result |= fsm->prev_state->ops.exit(fsm->prev_state);
+        }
+        if (fsm->curr_state->ops.enter != NULL) {
+            result |= fsm->curr_state->ops.enter(fsm->curr_state);
+        }
     } else {
 #if FSM_CFG_OS
         fsm_sys_mutex_release(&fsm->lock);
