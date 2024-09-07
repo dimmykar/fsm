@@ -92,6 +92,17 @@ typedef struct fsm_state {
 } fsm_state_t;
 
 /**
+ * \brief           The parameters passed on FSM initialization
+ */
+typedef struct fsm_init_params {
+    fsm_state_t *initial_state;              /*!< FSM initial state */
+    fsm_state_t **states_list;               /*!< Pointer to array with all FSM states.
+                                                      Must be ended with NULL record */
+    void *setup_data;                        /*!< Pointer to user defined data passed to
+                                                      all states on initialization. May be NULL */
+} fsm_init_params_t;
+
+/**
  * \brief           FSM handle
  */
 typedef struct fsm {
@@ -112,14 +123,10 @@ extern "C" {
 /**
  * \brief           Initialize finite state machine
  * \param[in]       fsm: FSM instance
- * \param[in]       initial_state: FSM initial state
- * \param[in]       states_list: Pointer to array with all FSM states.
- *                      Must be ended with NULL record
- * \param[in]       setup_data: Pointer to user defined data passed to all states
- *                      on initialization. May be NULL
+ * \param[in]       params: Pointer to init parameters
  * \return          \ref fsmOK on success, member of \ref fsmr_t otherwise
  */
-fsmr_t fsm_init(fsm_t *fsm, fsm_state_t *initial_state, fsm_state_t **states_list, void *setup_data);
+fsmr_t fsm_init(fsm_t *fsm, const fsm_init_params_t *params);
 
 /**
  * \brief           FSM Main Loop

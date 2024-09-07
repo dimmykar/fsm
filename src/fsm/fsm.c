@@ -28,18 +28,19 @@
 
 #include <string.h>
 
-fsmr_t fsm_init(fsm_t *fsm, fsm_state_t *initial_state, fsm_state_t **states_list, void *setup_data) {
-    if (fsm == NULL || initial_state == NULL || states_list == NULL) {
+fsmr_t fsm_init(fsm_t *fsm, const fsm_init_params_t *params) {
+    if (fsm == NULL || params == NULL || params->initial_state == NULL ||
+        params->states_list == NULL) {
         return fsmERRPAR;
     }
 
     memset(fsm, 0x00, sizeof(*fsm));
-    fsm->states_list = states_list;
+    fsm->states_list = params->states_list;
 
-    if (setup_data != NULL) {
+    if (params->setup_data != NULL) {
         fsm_state_t *state = *fsm->states_list;
         while (state != NULL) {
-            fsmr_t res = state->ops.setup(state, setup_data);
+            fsmr_t res = state->ops.setup(state, params->setup_data);
             if (res != fsmOK) {
                 return res;
             }
@@ -53,7 +54,7 @@ fsmr_t fsm_init(fsm_t *fsm, fsm_state_t *initial_state, fsm_state_t **states_lis
     }
 #endif /* FSM_CFG_OS */
 
-    fsm->curr_state = fsm->prev_state = fsm->next_state = initial_state;
+    fsm->curr_state = fsm->prev_state = fsm->next_state = params->initial_state;
     return fsmOK;
 }
 
