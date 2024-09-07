@@ -28,6 +28,8 @@
 
 #include <string.h>
 
+static fsmr_t validate_and_setup_state(fsm_state_t *state, void *setup_data);
+
 fsmr_t fsm_init(fsm_t *fsm, const fsm_init_params_t *params) {
     if (fsm == NULL || params == NULL || params->initial_state == NULL ||
         params->states_list == NULL) {
@@ -40,7 +42,7 @@ fsmr_t fsm_init(fsm_t *fsm, const fsm_init_params_t *params) {
     if (params->setup_data != NULL) {
         fsm_state_t *state = *fsm->states_list;
         while (state != NULL) {
-            fsmr_t res = state->ops.setup(state, params->setup_data);
+            fsmr_t res = validate_and_setup_state(state, params->setup_data);
             if (res != fsmOK) {
                 return res;
             }
@@ -55,6 +57,25 @@ fsmr_t fsm_init(fsm_t *fsm, const fsm_init_params_t *params) {
 #endif /* FSM_CFG_OS */
 
     fsm->curr_state = fsm->prev_state = fsm->next_state = params->initial_state;
+    return fsmOK;
+}
+
+/**
+ * \brief           Validate state and setup it using user-passed setup data
+ * \param[in]       state: Pointer to state instance
+ * \param[in]       setup_data: User-passed data for state setup
+ * \return          \ref fsmERRPAR if state has not run body, otherwise
+ *                      result of state setup with user-defined data
+ */
+static fsmr_t validate_and_setup_state(fsm_state_t *state, void *setup_data) {
+    if (state->ops.run == NULL) {
+        return fsmERRPAR;
+    }
+
+    if (state->ops.setup != NULL) {
+        return state->ops.setup(state, setup_data);
+    }
+
     return fsmOK;
 }
 

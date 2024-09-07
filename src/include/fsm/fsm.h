@@ -50,10 +50,10 @@ typedef enum fsmr {
 typedef struct fsm_state_ops {
     /**
      * \brief      Pass user specific data to state
-     * \details    Called once on FSM initialization
+     * \details    Called once on FSM initialization if user is passed setup data
+     * \details    May be NULL even if user is passed setup data to skip state setup
      * \param[in]  state: Pointer to state
-     * \param[in]  data: Pointer to user specific data passed on FSM initialization.
-     *                 May be NULL
+     * \param[in]  data: Pointer to user specific data passed on FSM initialization
      */
     fsmr_t (*setup)(fsm_state_t *state, void *data);
 
@@ -75,7 +75,7 @@ typedef struct fsm_state_ops {
 
     /**
      * \brief      State main body handler
-     * \details    Called periodically until state changes
+     * \details    Called periodically until state changes. MUST not be NULL
      * \param[in]  state: Pointer to state
      * \return     \ref fsmOK on success, member of \ref fsmr_t otherwise
      */
