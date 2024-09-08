@@ -21,7 +21,7 @@
  * This file is part of FSM - Finite State Machine library for small and embedded devices.
  *
  * Authors:         Dmitry KARASEV <karasevsdmitry@yandex.ru>
- * Version:         ${version}
+ * Version:         0.1.0
  */
 
 #ifndef FSM_HDR_USER_CONFIG_H
