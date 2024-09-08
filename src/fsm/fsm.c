@@ -46,14 +46,12 @@ fsmr_t fsm_init(fsm_t *fsm, const fsm_init_params_t *params) {
     memset(fsm, 0x00, sizeof(*fsm));
     fsm->states_list = params->states_list;
 
-    if (params->setup_data != NULL) {
-        fsm_state_t *state = *fsm->states_list;
-        while (state != NULL) {
-            fsmr_t res = validate_and_setup_state(state, params->setup_data);
-            if (res != fsmOK) {
-                return res;
-            }
-            ++state;
+    for (size_t i = 0; fsm->states_list[i] != NULL; i++) {
+        fsm_state_t *state = fsm->states_list[i];
+
+        fsmr_t res = validate_and_setup_state(state, params->setup_data);
+        if (res != fsmOK) {
+            return res;
         }
     }
 
@@ -80,7 +78,7 @@ static fsmr_t validate_and_setup_state(fsm_state_t *state, void *setup_data) {
         return fsmERRPAR;
     }
 
-    if (state->ops.setup != NULL) {
+    if ((state->ops.setup != NULL) && (setup_data != NULL)) {
         return state->ops.setup(state, setup_data);
     }
 
