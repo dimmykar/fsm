@@ -39,16 +39,16 @@ static fsmr_t validate_and_setup_state(fsm_state_t *state, void *setup_data);
 
 fsmr_t fsm_init(fsm_t *fsm, const fsm_init_params_t *params) {
     if (fsm == NULL || params == NULL || params->initial_state == NULL ||
-        params->states_list == NULL) {
+        params->states_map == NULL) {
         return fsmERRPAR;
     }
 
     memset(fsm, 0x00, sizeof(*fsm));
-    fsm->states_list = params->states_list;
+    fsm->states_map = params->states_map;
 
     /* Bind state to FSM, validate and setup it */
-    for (size_t i = 0; fsm->states_list[i] != NULL; i++) {
-        fsm_state_t *state = fsm->states_list[i];
+    for (size_t i = 0; fsm->states_map[i] != NULL; i++) {
+        fsm_state_t *state = fsm->states_map[i];
 
         state->fsm = fsm;
         fsmr_t res = validate_and_setup_state(state, params->setup_data);
@@ -122,12 +122,12 @@ fsmr_t fsm_run(fsm_t *fsm) {
 }
 
 fsmr_t fsm_state_transition(fsm_t *fsm, uint32_t new_state_id) {
-    if (fsm == NULL || fsm->states_list == NULL) {
+    if (fsm == NULL || fsm->states_map == NULL) {
         return fsmERRPAR;
     }
 
-    for (size_t i = 0; fsm->states_list[i] != NULL; i++) {
-        fsm_state_t *state = fsm->states_list[i];
+    for (size_t i = 0; fsm->states_map[i] != NULL; i++) {
+        fsm_state_t *state = fsm->states_map[i];
 
         if (state->id == new_state_id) {
 #if FSM_CFG_OS

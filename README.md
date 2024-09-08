@@ -99,7 +99,7 @@ int main(void) {
 
     fsm_init_params_t params = {
         .initial_state = &fsm_state_1,
-        .states_list = fsm_states_map,
+        .states_map = fsm_states_map,
         .setup_data = &optional_user_data
     };
     if (fsm_init(&fsm, &params) != fsmOK) {

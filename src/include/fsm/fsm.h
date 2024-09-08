@@ -98,7 +98,7 @@ typedef struct fsm_state {
  */
 typedef struct fsm_init_params {
     fsm_state_t *initial_state;              /*!< FSM initial state */
-    fsm_state_t **states_list;               /*!< Pointer to array with all FSM states.
+    fsm_state_t **states_map;                /*!< Pointer to array with all FSM states.
                                                       Must be ended with NULL record */
     void *setup_data;                        /*!< Pointer to user defined data passed to
                                                       all states on initialization. May be NULL */
@@ -108,7 +108,7 @@ typedef struct fsm_init_params {
  * \brief           FSM handle
  */
 typedef struct fsm {
-    fsm_state_t **states_list;               /*!< All available states in FSM. Must be ended with NULL record */
+    fsm_state_t **states_map;                /*!< All available states in FSM. Must be ended with NULL record */
     fsm_state_t *curr_state;                 /*!< FSM current state */
     fsm_state_t *prev_state;                 /*!< FSM previous state */
     fsm_state_t *next_state;                 /*!< FSM next state */
