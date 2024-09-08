@@ -28,6 +28,13 @@
 
 #include <string.h>
 
+/**
+ * \brief FSM dummy initial state
+ * \details Used as previous state after FSM initialization
+ * to perform correct FSM initial state enter action
+ */
+static fsm_state_t fsm_init_dummy_state = {0};
+
 static fsmr_t validate_and_setup_state(fsm_state_t *state, void *setup_data);
 
 fsmr_t fsm_init(fsm_t *fsm, const fsm_init_params_t *params) {
@@ -56,7 +63,8 @@ fsmr_t fsm_init(fsm_t *fsm, const fsm_init_params_t *params) {
     }
 #endif /* FSM_CFG_OS */
 
-    fsm->curr_state = fsm->prev_state = fsm->next_state = params->initial_state;
+    fsm->curr_state = fsm->prev_state = &fsm_init_dummy_state;
+    fsm->next_state = params->initial_state;
     return fsmOK;
 }
 
