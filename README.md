@@ -47,7 +47,7 @@ static fsm_state_t fsm_state_1 = {
         .exit  = state_1_exit,
         .run   = state_1_run
     },
-    .data = NULL
+    .data = NULL /* Optional user data for this state */
 };
 
 static fsm_state_t fsm_state_2 = {
@@ -84,23 +84,34 @@ static fsm_state_t *fsm_states_map[] = {
     &fsm_state_1,
     &fsm_state_2,
     &fsm_state_3,
-    NULL
+    NULL /* DO NOT FORGET THIS NULL AT THE END! */
 };
 ```
 
 4. Create FSM instance, initialize it and run in loop
 
 ```c
-static user_data_t optional_user_data;
+/**
+ * \brief           Optional user data that passed to all states setup callback
+ *                      on FSM initialization
+ * \details         Usually used to pass to all states the specific data that
+ *                      cannot be known at compile time, only when the firmware is executed
+ *                      (on runtime)
+ */
+static user_data_t optional_setup_user_data;
+
+/**
+ * \brief           FSM instance
+ */
 static fsm_t fsm;
 
 int main(void) {
-    optional_user_data = ...;
+    optional_setup_user_data = ...;
 
     fsm_init_params_t params = {
         .initial_state = &fsm_state_1,
         .states_map = fsm_states_map,
-        .setup_data = &optional_user_data
+        .setup_data = &optional_setup_user_data
     };
     if (fsm_init(&fsm, &params) != fsmOK) {
         return 1;
