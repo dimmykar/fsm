@@ -46,9 +46,11 @@ fsmr_t fsm_init(fsm_t *fsm, const fsm_init_params_t *params) {
     memset(fsm, 0x00, sizeof(*fsm));
     fsm->states_list = params->states_list;
 
+    /* Bind state to FSM, validate and setup it */
     for (size_t i = 0; fsm->states_list[i] != NULL; i++) {
         fsm_state_t *state = fsm->states_list[i];
 
+        state->fsm = fsm;
         fsmr_t res = validate_and_setup_state(state, params->setup_data);
         if (res != fsmOK) {
             return res;

@@ -33,6 +33,7 @@
 #include "fsm/fsm_config.h"
 #include "fsm/system/fsm_sys.h"
 
+typedef struct fsm fsm_t;
 typedef struct fsm_state fsm_state_t;
 
 /**
@@ -86,6 +87,7 @@ typedef struct fsm_state_ops {
  * \brief           FSM State handle
  */
 typedef struct fsm_state {
+    fsm_t *fsm;                              /*!< FSM instance. Do not define at state declaration */
     uint32_t id;                             /*!< State unique numeric ID */
     fsm_state_ops_t ops;                     /*!< State specific operations */
     void *data;                              /*!< User defined state data */

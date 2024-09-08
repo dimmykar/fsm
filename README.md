@@ -123,7 +123,7 @@ static fsmr_t state_1_run(fsm_state_t *state) {
     ...
 
     if (/* state transition condition */) {
-        return fsm_state_transition(&fsm, FSM_STATE_3_ID);
+        return fsm_state_transition(state->fsm, FSM_STATE_3_ID);
     }
 
     ...
